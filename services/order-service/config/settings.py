@@ -56,16 +56,26 @@ TEMPLATES = [
     },
 ]
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql' if os.environ.get('DATABASE_ENGINE') == 'postgresql' else 'django.db.backends.sqlite3',
-        'NAME': os.environ.get('DATABASE_NAME', '/app/db/order.db'),
-        'USER': os.environ.get('DATABASE_USER', ''),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
-        'HOST': os.environ.get('DATABASE_HOST', ''),
-        'PORT': os.environ.get('DATABASE_PORT', ''),
+# Database configuration
+import dj_database_url
+
+if os.environ.get('DATABASE_URL'):
+    # Use DATABASE_URL if provided (for CI/CD)
+    DATABASES = {
+        'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600)
     }
-}
+else:
+    # Fallback to individual environment variables
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql' if os.environ.get('DATABASE_ENGINE') == 'postgresql' else 'django.db.backends.sqlite3',
+            'NAME': os.environ.get('DATABASE_NAME', '/app/db/order.db'),
+            'USER': os.environ.get('DATABASE_USER', ''),
+            'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
+            'HOST': os.environ.get('DATABASE_HOST', ''),
+            'PORT': os.environ.get('DATABASE_PORT', ''),
+        }
+    }
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
