@@ -44,6 +44,17 @@ jobs:
       run: |
         docker compose exec -T postgres pg_isready -U shop_user && echo "✅ PostgreSQL is ready"
 
+    - name: Create databases
+      run: |
+        echo "🗄️ Creating databases..."
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE user_db;" || true
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE product_db;" || true
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE cart_db;" || true
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE order_db;" || true
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE currency_db;" || true
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE discount_db;" || true
+        echo "✅ Databases created"
+
     - name: Check Redis
       run: |
         docker compose exec -T redis redis-cli ping && echo "✅ Redis is ready"
