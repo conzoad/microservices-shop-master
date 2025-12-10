@@ -48,11 +48,14 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - DJANGO_SETTINGS_MODULE=config.settings
-      - DATABASE_NAME=discount_db
+      - DATABASE_NAME=user_db
       - DATABASE_USER=shop_user
       - DATABASE_PASSWORD=shop_password
       - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432_healthy
+      - DATABASE_PORT=5432
+    depends_on:
+      redis:
+        condition: service_healthy
       postgres:
         condition: service_healthy
     networks:
@@ -223,6 +226,7 @@ services:
       - DATABASE_PASSWORD=shop_password
       - DATABASE_HOST=postgres
       - DATABASE_PORT=5432
+    depends_on:
       redis:
         condition: service_healthy
       postgres:
