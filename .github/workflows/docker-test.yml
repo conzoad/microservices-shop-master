@@ -26,35 +26,44 @@ jobs:
         DEBUG=True
         EOF
 
-    - name: Build and start services
+    - name: Start database services first
+      run: |
+        docker compose up -d postgres redis
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        echo "⏳ Waiting for PostgreSQL..."
+        for i in {1..30}; do
+          docker compose exec -T postgres pg_isready -U shop_user && break
+          echo "Waiting... ($i/30)"
+          sleep 2
+        done
+
+    - name: Create databases
+      run: |
+        echo "🗄️ Creating databases..."
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE user_db;"
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE product_db;"
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE cart_db;"
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE order_db;"
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE currency_db;"
+        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE discount_db;"
+        echo "✅ Databases created"
+
+    - name: Start all services
       run: |
         docker compose up -d --build
 
     - name: Wait for services to be ready
       run: |
         echo "⏳ Waiting for services to start..."
-        sleep 60
+        sleep 30
 
     - name: Check running containers
       run: |
         echo "📦 Running containers:"
         docker compose ps
         
-    - name: Check PostgreSQL
-      run: |
-        docker compose exec -T postgres pg_isready -U shop_user && echo "✅ PostgreSQL is ready"
-
-    - name: Create databases
-      run: |
-        echo "🗄️ Creating databases..."
-        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE user_db;" || true
-        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE product_db;" || true
-        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE cart_db;" || true
-        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE order_db;" || true
-        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE currency_db;" || true
-        docker compose exec -T postgres psql -U shop_user -d postgres -c "CREATE DATABASE discount_db;" || true
-        echo "✅ Databases created"
-
     - name: Check Redis
       run: |
         docker compose exec -T redis redis-cli ping && echo "✅ Redis is ready"
