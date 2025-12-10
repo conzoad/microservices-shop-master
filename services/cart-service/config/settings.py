@@ -65,15 +65,15 @@ if os.environ.get('DATABASE_URL'):
         'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600)
     }
 else:
-    # Fallback to individual environment variables
+    # Use PostgreSQL by default (for Docker Compose)
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql' if os.environ.get('DATABASE_ENGINE') == 'postgresql' else 'django.db.backends.sqlite3',
-            'NAME': os.environ.get('DATABASE_NAME', '/app/db/cart.db'),
-            'USER': os.environ.get('DATABASE_USER', ''),
-            'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
-            'HOST': os.environ.get('DATABASE_HOST', ''),
-            'PORT': os.environ.get('DATABASE_PORT', ''),
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DATABASE_NAME', 'cart_db'),
+            'USER': os.environ.get('DATABASE_USER', 'shop_user'),
+            'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'shop_password'),
+            'HOST': os.environ.get('DATABASE_HOST', 'postgres'),
+            'PORT': os.environ.get('DATABASE_PORT', '5432'),
         }
     }
 

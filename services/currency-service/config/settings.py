@@ -67,27 +67,17 @@ if os.environ.get('DATABASE_URL'):
         'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600)
     }
 else:
-    # Fallback to individual environment variables
-    DATABASE_ENGINE = os.environ.get('DATABASE_ENGINE', 'sqlite')
-    
-    if DATABASE_ENGINE == 'postgresql':
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.environ.get('DATABASE_NAME', 'currency_db'),
-                'USER': os.environ.get('DATABASE_USER', 'shop_user'),
-                'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'shop_password'),
-                'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
-                'PORT': os.environ.get('DATABASE_PORT', '5432'),
-            }
+    # Use PostgreSQL by default (for Docker Compose)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DATABASE_NAME', 'currency_db'),
+            'USER': os.environ.get('DATABASE_USER', 'shop_user'),
+            'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'shop_password'),
+            'HOST': os.environ.get('DATABASE_HOST', 'postgres'),
+            'PORT': os.environ.get('DATABASE_PORT', '5432'),
         }
-    else:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
