@@ -28,7 +28,7 @@ jobs:
 
     - name: Build and start services
       run: |
-        docker-compose up -d --build
+        docker compose up -d --build
 
     - name: Wait for services to be ready
       run: |
@@ -38,35 +38,35 @@ jobs:
     - name: Check running containers
       run: |
         echo "📦 Running containers:"
-        docker-compose ps
+        docker compose ps
         
     - name: Check PostgreSQL
       run: |
-        docker-compose exec -T postgres pg_isready -U shop_user && echo "✅ PostgreSQL is ready"
+        docker compose exec -T postgres pg_isready -U shop_user && echo "✅ PostgreSQL is ready"
 
     - name: Check Redis
       run: |
-        docker-compose exec -T redis redis-cli ping && echo "✅ Redis is ready"
+        docker compose exec -T redis redis-cli ping && echo "✅ Redis is ready"
 
     - name: Run database migrations
       run: |
         echo "🔄 Running migrations..."
-        docker-compose exec -T user-service python manage.py migrate --noinput
-        docker-compose exec -T product-service python manage.py migrate --noinput
-        docker-compose exec -T cart-service python manage.py migrate --noinput
-        docker-compose exec -T order-service python manage.py migrate --noinput
-        docker-compose exec -T currency-service python manage.py migrate --noinput
-        docker-compose exec -T discount-service python manage.py migrate --noinput
+        docker compose exec -T user-service python manage.py migrate --noinput
+        docker compose exec -T product-service python manage.py migrate --noinput
+        docker compose exec -T cart-service python manage.py migrate --noinput
+        docker compose exec -T order-service python manage.py migrate --noinput
+        docker compose exec -T currency-service python manage.py migrate --noinput
+        docker compose exec -T discount-service python manage.py migrate --noinput
 
     - name: Run unit tests
       run: |
         echo "🧪 Running tests..."
-        docker-compose exec -T user-service python manage.py test apps.users.tests --verbosity=1
-        docker-compose exec -T product-service python manage.py test apps.products.tests --verbosity=1
-        docker-compose exec -T cart-service python manage.py test apps.cart.tests --verbosity=1
-        docker-compose exec -T order-service python manage.py test apps.orders.tests --verbosity=1
-        docker-compose exec -T currency-service python manage.py test apps.currency.tests --verbosity=1
-        docker-compose exec -T discount-service python manage.py test apps.discounts.tests --verbosity=1
+        docker compose exec -T user-service python manage.py test apps.users.tests --verbosity=1
+        docker compose exec -T product-service python manage.py test apps.products.tests --verbosity=1
+        docker compose exec -T cart-service python manage.py test apps.cart.tests --verbosity=1
+        docker compose exec -T order-service python manage.py test apps.orders.tests --verbosity=1
+        docker compose exec -T currency-service python manage.py test apps.currency.tests --verbosity=1
+        docker compose exec -T discount-service python manage.py test apps.discounts.tests --verbosity=1
 
     - name: Test API endpoints
       run: |
@@ -79,9 +79,9 @@ jobs:
       if: failure()
       run: |
         echo "📋 Service logs:"
-        docker-compose logs --tail=100
+        docker compose logs --tail=100
 
     - name: Cleanup
       if: always()
       run: |
-        docker-compose down -v
+        docker compose down -v
