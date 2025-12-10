@@ -27,7 +27,7 @@ class OrderModelTest(TestCase):
 
     def test_order_str(self):
         """Тест строкового представления"""
-        self.assertEqual(str(self.order), f"Order #{self.order.id} by User #{self.order.user_id}")
+        self.assertEqual(str(self.order), f"Order #{self.order.pk} by User #{self.order.user_id}")
 
     def test_items_count(self):
         """Тест подсчета количества элементов"""

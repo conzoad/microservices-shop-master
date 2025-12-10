@@ -83,7 +83,7 @@ class DiscountModelTest(TestCase):
         expected_price = Decimal('170.00')
         # В зависимости от реализации save() может пересчитываться
         # Здесь просто проверяем что создался
-        self.assertIsNotNone(discount.id)
+        self.assertIsNotNone(discount.pk)
 
     def test_unique_together_constraint(self):
         """Тест уникальности комбинации product_id и holiday"""
